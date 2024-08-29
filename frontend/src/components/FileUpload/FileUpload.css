@@ -1,0 +1,27 @@
+.upload-box {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 90%;
+    max-width: 600px;
+    background-color: white;
+    border: 2px solid #000;
+    box-shadow: 24;
+    padding: 16px;
+}
+
+@media screen and (min-width: 600px) {
+    .flex-row-2 {
+        display: flex;
+        width: 100%;
+        justify-content: space-between;
+        flex-direction: row;
+    }
+    .upload-box {
+        width: "90%";
+        max-width: "90%";
+        max-height: "90%";
+    }
+}

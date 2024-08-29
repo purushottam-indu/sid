@@ -1,0 +1,98 @@
+.layout {
+    display: flex;
+    flex-direction: column;
+}
+ 
+.header {
+    background-color: #ffffff;
+    color: #000000;
+    border-bottom: 2px solid #0197f6;
+}
+ 
+.header.dark {
+    background-color: #3f3f3f;
+    border-bottom: 2px solid #f2f1f1;
+}
+ 
+.header.bright {
+    background-color: #ffffff;
+    border-bottom: 2px solid #0197f6;
+}
+ 
+.dark,
+.bright {
+    transition: background-color 0.3s ease, color 0.3s ease; /* Add transition for background-color and color */
+}
+ 
+.headerContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 20px;
+    margin-left: 6%;
+}
+ 
+.headerTitleContainer {
+    display: flex;
+    align-items: center;
+    color: #f2f2f2;
+    text-decoration: none;
+}
+ 
+.headerLogo {
+    height: 25px;
+}
+ 
+.titleContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    margin-left: -17%;
+    /* margin-right:770px; */
+}
+ 
+.headerTitle {
+    font-size: 20px; /* Larger font size for the title */
+    font-weight: 700;
+    margin: 0; /* Remove default margins */
+}
+ 
+.headerSubtitle {
+    font-size: 12px; /* Smaller font size for the subtitle */
+    font-weight: 400;
+    margin: 0; /* Remove default margins */
+}
+ 
+.logoContainer {
+    /* margin-left: 130px; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+}
+
+.logoContainer > img{
+    height: 30px
+}
+ 
+@media (max-width: 500px) {
+    .headerContainer {
+        flex-direction: row-reverse;
+    }
+    .titleContainer {
+        margin-left: 0; /* Reset margin for smaller screens */
+        margin-right: 0; /* Reset margin for smaller screens */
+        margin-left: 20%; /* Remove left margin for smaller screens */
+        padding: 0 10px; /* Adjust padding if needed */
+    }
+    .headerTitle {
+        font-size: 18px; /* Adjust font size for smaller screens if needed */
+    }
+    .headerSubtitle {
+        font-size: 10px; /* Adjust font size for smaller screens if needed */
+    }
+    .logoContainer > img{
+        height: 16px
+    }
+}

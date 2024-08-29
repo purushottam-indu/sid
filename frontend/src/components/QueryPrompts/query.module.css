@@ -1,0 +1,44 @@
+.boxesContainerquerySuggestion {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Adjust to 2 columns for wider boxes */
+  gap: 10px;
+  padding: 5px;
+  margin-left: 150px;
+  margin-right: 150px;
+  margin-top: 3%;
+}
+
+.boxquerySuggestion {
+  background-color: #f6f3f3;
+  padding: 5px; /* Reduce padding for smaller height */
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  font-size: 11px; /* Increase font size slightly if needed */
+  color: #000000;
+  text-align: center;
+  transition: transform 0.2s;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 120px; /* Set a fixed height to prevent boxes from being too tall */
+}
+
+.boxquerySuggestion:hover {
+  transform: translateY(-3px);
+}
+
+@media (max-width: 1200px) {
+  .boxesContainerquerySuggestion {
+    grid-template-columns: repeat(3, 1fr); /* Two columns for medium screens */
+    margin-left: 20px;
+    margin-right: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .boxesContainerquerySuggestion {
+    grid-template-columns: 1fr; /* One column for smaller screens */
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+}

@@ -1,0 +1,366 @@
+import { useRef, useState, useEffect } from "react";
+import { useBoolean } from "@fluentui/react-hooks";
+import { Checkbox, Panel, DefaultButton, TextField, Dialog, DialogType, Text } from "@fluentui/react";
+import AssistantIcon from "../../assets/GPTAssistant.svg";
+import readNDJSONStream from "ndjson-readablestream";
+import GeneralHelp from "../../components/GeneralHelp/GeneralHelp";
+import styles from "./Chat.module.css";
+import { HelpButton } from "../../components/HelpButton/HelpButton";
+import { chatApi, RetrievalMode, Approaches, AskResponse, ChatRequest, ChatTurn } from "../../api";
+import { Answer, AnswerError, AnswerLoading } from "../../components/Answer";
+import { QuestionInput } from "../../components/QuestionInput";
+import { UserChatMessage } from "../../components/UserChatMessage";
+import { AnalysisPanel, AnalysisPanelTabs } from "../../components/AnalysisPanel";
+import { SettingsButton } from "../../components/SettingsButton";
+import { ClearChatButton } from "../../components/ClearChatButton";
+import { Slider, IStackTokens, Stack, IStackStyles } from "@fluentui/react";
+import { ButtonRegular } from "@fluentui/react-icons";
+import { FeedbackButton } from "../../components/FeedbackButton/FeedbackButton";
+import { ModelSelection } from "../../components/ModelSelection/ModelSelection";
+import { IDropdownOption } from "@fluentui/react/lib/Dropdown";
+import { Access } from "../../api";
+import { accessApi } from "../../api";
+
+import ModelToggleButton from "../../components/ModelToggle/ModelToggle";
+import { UploadDocumentButton } from "../../components/UploadDocumentButton/UploadDocument";
+
+const Chat = () => {
+    const [isConfigPanelOpen, setIsConfigPanelOpen] = useState(false);
+    const [promptTemplate, setPromptTemplate] = useState<string>("");
+    const [shouldStream, setShouldStream] = useState<boolean>(true);
+    const [useSuggestFollowupQuestions, setUseSuggestFollowupQuestions] = useState<boolean>(false);
+    const lastQuestionRef = useRef<string>("");
+    const chatMessageStreamEnd = useRef<HTMLDivElement | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [error, setError] = useState<unknown>();
+    const [isOpen, { setTrue: openHelpWindow, setFalse: dismissHelpWindow }] = useBoolean(false);
+    const [activeCitation, setActiveCitation] = useState<string>();
+    const [activeAnalysisPanelTab, setActiveAnalysisPanelTab] = useState<AnalysisPanelTabs | undefined>(undefined);
+
+    const modelApproach = useRef<string>("GPT3.5");
+    const [modelApproachState, setModelApproachState] = useState<string>("GPT3.5");
+
+    const [selectedAnswer, setSelectedAnswer] = useState<number>(0);
+    const [answers, setAnswers] = useState<[user: string, response: AskResponse][]>([]);
+    const [sliderValue, setSliderValue] = useState(3);
+    const promptHasChanged = useRef<boolean>(false);
+    const sliderAriaValueText = (value: number) => `${value / 10}`;
+    const sliderValueFormat = (value: number) => `${value / 10}`;
+
+    const [selectedModel, setSelectedModel] = useState<IDropdownOption | undefined>({ key: "GPT3.5", text: "GPT 3.5" });
+
+    const onChangeModel = (event: React.FormEvent<HTMLDivElement>, item: IDropdownOption | undefined): void => {
+        setSelectedModel(item);
+    };
+
+    const sliderOnChange = (value: number) => setSliderValue(value);
+
+    const getStyles = () => ({
+        main: [
+            {
+                selectors: {
+                    ["@media (min-width: 720px)"]: {
+                        maxHeight: "90%",
+                        minWidth: "800px",
+                        maxWidth: "900px"
+                    }
+                }
+            }
+        ]
+    });
+
+    const closeConfigPanel = () => {
+        setIsConfigPanelOpen(false);
+        if (promptHasChanged.current == true) {
+            clearChat();
+            promptHasChanged.current = false;
+        }
+    };
+
+    const clearPrompt = () => {
+        setPromptTemplate("");
+        clearChat();
+    };
+
+    const makeApiRequest = async (question: string) => {
+        lastQuestionRef.current = question;
+
+        error && setError(undefined);
+        setIsLoading(true);
+        setActiveCitation(undefined);
+        setActiveAnalysisPanelTab(undefined);
+
+        try {
+            const history: ChatTurn[] = answers.map(a => ({ user: a[0], bot: a[1].answer }));
+            const request: ChatRequest = {
+                history: [...history, { user: question, bot: undefined }],
+                approach: Approaches.General,
+                shouldStream: shouldStream,
+                overrides: {
+                    modelType: modelApproach.current,
+                    promptTemplate: promptTemplate.length === 0 ? undefined : promptTemplate,
+                    suggestFollowupQuestions: useSuggestFollowupQuestions,
+                    temperature: sliderValue / 10
+                }
+            };
+            console.log(request);
+            const response = await chatApi(request);
+            if (!response.body) {
+                throw Error("No response body");
+            }
+            if (shouldStream) {
+                let answer: string = "";
+                let askResponse: AskResponse = {} as AskResponse;
+
+                for await (const event of readNDJSONStream(response.body)) {
+                    if (event["data_points"]) {
+                        askResponse = event;
+                    } else if (event["choices"] && event["choices"][0]["delta"]["content"]) {
+                        answer += event["choices"][0]["delta"]["content"];
+                        let latestResponse: AskResponse = { ...askResponse, answer: answer };
+                        setIsLoading(false);
+                        setAnswers([...answers, [question, latestResponse]]);
+                    } else if (event["error"]) {
+                        alert(event["error"]);
+                    }
+                }
+            } else {
+                const parsedResponse: AskResponse = await response.json();
+
+                if (response.status > 299 || !response.ok) {
+                    throw Error(parsedResponse.error || "Unknown error");
+                }
+                setAnswers([...answers, [question, parsedResponse]]);
+            }
+        } catch (e) {
+            setError(e);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const clearChat = () => {
+        lastQuestionRef.current = "";
+        error && setError(undefined);
+        setActiveCitation(undefined);
+        setActiveAnalysisPanelTab(undefined);
+        setAnswers([]);
+    };
+
+    useEffect(() => chatMessageStreamEnd.current?.scrollIntoView({ behavior: "smooth" }), [isLoading]);
+
+    const onPromptTemplateChange = (_ev?: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string) => {
+        setPromptTemplate(newValue || "");
+        promptHasChanged.current = true;
+    };
+
+    const onUseSuggestFollowupQuestionsChange = (_ev?: React.FormEvent<HTMLElement | HTMLInputElement>, checked?: boolean) => {
+        setUseSuggestFollowupQuestions(!!checked);
+    };
+
+    const onToggleTab = (tab: AnalysisPanelTabs, index: number) => {
+        if (activeAnalysisPanelTab === tab && selectedAnswer === index) {
+            setActiveAnalysisPanelTab(undefined);
+        } else {
+            setActiveAnalysisPanelTab(tab);
+        }
+
+        setSelectedAnswer(index);
+    };
+
+    //check for permitted users :
+
+    const [hasAccess, setHasAccess] = useState<Access>({ hasModAccess: false });
+
+    const makeAccessApiRequest = async () => {
+        try {
+            const response = await accessApi();
+            console.log(response);
+            setHasAccess(response);
+        } catch (e) {
+            console.log(e);
+        }
+    };
+
+    useEffect(() => {
+        // This function will be called only once during the initial render
+
+        makeAccessApiRequest();
+        // Cleanup function (optional)
+        return () => {
+            console.log(hasAccess);
+        };
+    }, []);
+
+    const handleModelApproachChange = (_ev?: React.MouseEvent<HTMLElement>, newAlignment?: string) => {
+        setModelApproachState(newAlignment || "GPT3.5");
+        modelApproach.current = newAlignment || "GPT3.5";
+        console.log(newAlignment);
+        clearChat();
+    };
+
+    return (
+        <div className={styles.container}>
+            <div className={styles.commandsContainer}>
+                <div className={styles.modelSelector}>
+                    <div className={styles.dropDownContainer}>
+                        {hasAccess.hasModAccess ? (
+                            <ModelToggleButton
+                                value={modelApproach.current}
+                                handleChange={handleModelApproachChange}
+                                disabled={!hasAccess.hasModAccess || !!lastQuestionRef.current}
+                            ></ModelToggleButton>
+                        ) : (
+                            <></>
+                        )}
+                        {/* <ModelSelection
+                            selectedModel={selectedModel}
+                            onChangeModel={onChangeModel}
+                            disabled={!hasAccess.hasModAccess || !!lastQuestionRef.current} */}
+                        {/* /> */}
+                    </div>
+                </div>
+                <div className={styles.buttonContainer}>
+                    <UploadDocumentButton className={styles.commandButton} />
+                    <ClearChatButton className={styles.commandButton} onClick={clearChat} disabled={!lastQuestionRef.current || isLoading} />
+                    <SettingsButton className={styles.commandButton} onClick={() => setIsConfigPanelOpen(!isConfigPanelOpen)} />
+                    <HelpButton className={styles.commandButton} onClick={openHelpWindow} disabled={false} />
+                    <FeedbackButton className={styles.commandButton} />
+                </div>
+            </div>
+            <div>
+                <Dialog
+                    hidden={!isOpen}
+                    onDismiss={dismissHelpWindow}
+                    dialogContentProps={{
+                        type: DialogType.normal,
+                        title: "AI Assistant Helper",
+                        closeButtonAriaLabel: "Close"
+                    }}
+                    styles={getStyles}
+                >
+                    <GeneralHelp />
+                </Dialog>
+            </div>
+
+            <div className={styles.chatRoot}>
+                <div className={styles.chatContainer}>
+                    {!lastQuestionRef.current ? (
+                        <div className={styles.chatEmptyState}>
+                            {/* <img src={AssistantIcon} className={styles.appLogo} /> */}
+                            <h1 className={styles.chatEmptyStateTitle}>KUMO AI</h1>
+                            <p className={styles.disclaimerText}>
+                                The AI powered agent is designed to assist with your queries. While it strives to provide accurate and up-to-date information,
+                                it is important to note that it is an AI-based system and should not replace human validation.
+                            </p>
+                        </div>
+                    ) : (
+                        <div className={styles.chatMessageStream}>
+                            {answers.map((answer, index) => (
+                                <div key={index}>
+                                    <UserChatMessage message={answer[0]} />
+                                    <div className={styles.chatMessageGpt}>
+                                        <Answer
+                                            key={index}
+                                            answer={answer[1]}
+                                            onFollowupQuestionClicked={q => makeApiRequest(q)}
+                                            showFollowupQuestions={useSuggestFollowupQuestions && answers.length - 1 === index}
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                            {isLoading && (
+                                <>
+                                    <UserChatMessage message={lastQuestionRef.current} />
+                                    <div className={styles.chatMessageGptMinWidth}>
+                                        <AnswerLoading />
+                                    </div>
+                                </>
+                            )}
+                            {error ? (
+                                <>
+                                    <UserChatMessage message={lastQuestionRef.current} />
+                                    <div className={styles.chatMessageGptMinWidth}>
+                                        <AnswerError error={error.toString()} onRetry={() => makeApiRequest(lastQuestionRef.current)} />
+                                    </div>
+                                </>
+                            ) : null}
+                            <div ref={chatMessageStreamEnd} />
+                        </div>
+                    )}
+
+                    <div className={styles.chatInput}>
+                        {promptTemplate == "" ? (
+                            <div></div>
+                        ) : (
+                            <div className={styles.customPromptMessage}>
+                                <Text className={styles.customPromptMessage}>
+                                    *Assistant behaviour is being modified by custom prompt.
+                                    <button className={styles.clearPrompt} onClick={clearPrompt}>
+                                        <Text>
+                                            <u>
+                                                <i>Clear Prompt</i>
+                                            </u>
+                                        </Text>
+                                    </button>
+                                </Text>
+                            </div>
+                        )}
+                        <QuestionInput clearOnSend placeholder="Type a new question" disabled={isLoading} onSend={question => makeApiRequest(question)} />
+                    </div>
+                </div>
+
+                {answers.length > 0 && activeAnalysisPanelTab && (
+                    <AnalysisPanel
+                        className={styles.chatAnalysisPanel}
+                        activeCitation={activeCitation}
+                        onActiveTabChanged={x => onToggleTab(x, selectedAnswer)}
+                        citationHeight="810px"
+                        answer={answers[selectedAnswer][1]}
+                        activeTab={activeAnalysisPanelTab}
+                    />
+                )}
+
+                <Panel
+                    headerText="Configure answer generation"
+                    isOpen={isConfigPanelOpen}
+                    isBlocking={false}
+                    onDismiss={() => setIsConfigPanelOpen(false)}
+                    closeButtonAriaLabel="Close"
+                    onRenderFooterContent={() => <DefaultButton onClick={closeConfigPanel}>Close</DefaultButton>}
+                    isFooterAtBottom={true}
+                >
+                    <TextField
+                        className={styles.chatPromptTemplate}
+                        defaultValue={promptTemplate}
+                        label="Override prompt template"
+                        multiline
+                        rows={5}
+                        autoAdjustHeight
+                        onChange={onPromptTemplateChange}
+                        placeholder="Give a custom prompt eg Act as a python coding assistant."
+                    />
+                    <Slider
+                        className={styles.chatTemprature}
+                        label="Creativity"
+                        value={sliderValue}
+                        max={10}
+                        ariaValueText={sliderAriaValueText}
+                        valueFormat={sliderValueFormat}
+                        showValue
+                        onChange={sliderOnChange}
+                    />
+
+                    {/* <Checkbox
+                        className={styles.chatSettingsSeparator}
+                        checked={useSuggestFollowupQuestions}
+                        label="Suggest follow-up questions"
+                        onChange={onUseSuggestFollowupQuestionsChange}
+                    /> */}
+                </Panel>
+            </div>
+        </div>
+    );
+};
+
+export default Chat;

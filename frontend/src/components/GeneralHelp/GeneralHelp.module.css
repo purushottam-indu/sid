@@ -1,0 +1,16 @@
+.listStyle {
+    margin-bottom: 15px;
+}
+
+.listItem {
+    margin-bottom: 8px;
+    font-size: 11px;
+}
+
+.exampleGood {
+    color: black;
+}
+
+.exampleBad {
+    color: black;
+}

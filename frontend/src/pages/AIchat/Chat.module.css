@@ -1,0 +1,583 @@
+.container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-top: 10px;
+    overflow-y: auto;
+    margin-bottom: 155px;
+    max-height: 75%;
+    transition: all ease-in-out 0.5s;
+}
+
+.chatRoot {
+    flex: 1;
+    display: flex;
+    width: 100%;
+}
+
+.chatContainer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+@media (min-resolution: 120dpi) and (max-resolution: 144dpi) {
+    .chatContainer {
+        max-height: 70%;
+    }
+    .cylindricalBar {
+        margin-top: 2rem !important;
+    }
+}
+
+/* Adjust height for zoom level 150% (assumed to correspond to resolution 144dpi) */
+@media (min-resolution: 144dpi) and (max-resolution: 192dpi) {
+    .container {
+        max-height: 65%;
+    }
+    .cylindricalBar {
+        margin-top: 1.5rem !important;
+    }
+    .disclaimerText {
+        font-size: small;
+    }
+    .boxquerySuggestion {
+        font-size: 11px !important;
+    }
+    .hideboxquerySuggestion {
+        font-size: 11px !important;
+    }
+
+    .boxesContainerquerySuggestion {
+        margin-top: 1% !important;
+    }
+    .shrunk {
+        margin-top: 10px;
+        max-height: 68% !important;
+    }
+    .stopText {
+        font-size: 11px;
+    }
+    .customPromptMessageResponse {
+        font-size: 11px;
+    }
+}
+
+.chatEmptyState {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    /* justify-content: top; */
+    align-items: center;
+    max-height: 1024px;
+    padding-top: 10px;
+}
+
+.customPromptMessage {
+    display: flex;
+    margin: auto;
+    /* margin-bottom: 5px; */
+    color: rgb(5, 5, 74);
+    white-space: pre-line;
+    overflow: auto;
+}
+
+.customPromptMessageResponse {
+    display: flex;
+    margin: auto;
+    /* margin-bottom: 5px; */
+    color: rgb(5, 5, 74);
+    white-space: pre-line;
+    overflow: auto;
+    justify-content: center;
+}
+
+@keyframes loading {
+    0% {
+        content: "";
+    }
+    25% {
+        content: ".";
+    }
+    50% {
+        content: "..";
+    }
+    75% {
+        content: "...";
+    }
+    100% {
+        content: "";
+    }
+}
+
+.loadingdots::after {
+    content: "";
+    animation: loading 1s infinite;
+}
+
+.clearPrompt {
+    margin-left: 5px;
+    border: none;
+    margin-bottom: 5px;
+    color: rgb(5, 5, 74);
+    cursor: pointer;
+}
+
+.clearPrompt > span {
+    font-size: 11px;
+}
+
+.chatEmptyStateTitle {
+    font-size: 4rem;
+    font-weight: 600;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+.chatEmptyStateSubtitle {
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+@media only screen and (max-height: 500px) {
+    .chatEmptyState {
+        padding-top: 0;
+    }
+
+    .chatEmptyStateTitle {
+        font-size: 3rem;
+        margin-bottom: 0px;
+    }
+}
+
+.chatMessageStream {
+    flex-grow: 1;
+    max-height: 1024px;
+    max-width: 90%;
+    width: 100%;
+    /* overflow-y: auto; */
+    padding-left: 24px;
+    padding-right: 24px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chatMessageGpt {
+    margin-bottom: 20px;
+    max-width: 80%;
+    display: flex;
+    min-width: 500px;
+}
+.commandButtonDisabled {
+    margin-right: 20px;
+    opacity: 0.4;
+    pointer-events: none;
+}
+
+.chatMessageGptMinWidth {
+    max-width: 500px;
+    margin-bottom: 20px;
+}
+
+.chatInput {
+    position: fixed;
+    bottom: 0;
+    flex: 0 0 100px;
+    padding-top: 12px;
+    padding-bottom: 24px;
+    padding-left: 24px;
+    padding-right: 24px;
+    width: 100%;
+    max-width: 70%;
+    color: #000000;
+    /* background: #ffffff; */
+}
+
+.chatAnalysisPanel {
+    flex: 1;
+    overflow-y: auto;
+    max-height: 89vh;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+.chatPromptTemplate {
+    margin-top: 15px;
+}
+
+.loadingLogo {
+    font-size: 28px;
+}
+
+.commandsContainer {
+    display: flex;
+}
+
+.modelSelector {
+    display: flex;
+    flex: 1.2;
+    justify-content: end;
+}
+.dropDownContainer {
+    display: flex;
+}
+.buttonContainer {
+    display: flex;
+    justify-content: center;
+    flex: 1;
+    align-self: center;
+    margin: auto;
+    /* margin-bottom: 1rem; */
+}
+
+.commandButton {
+    margin-right: 20px;
+}
+.upload {
+    margin: auto;
+}
+.modelSelector {
+    margin: auto;
+}
+
+.appLogo {
+    height: 120px;
+}
+
+.disclaimerText {
+    padding: 0;
+    font-size: 12px;
+    margin-left: 12rem;
+    margin-right: 12rem;
+    color: rgb(11, 11, 206);
+    text-align: left;
+    /* font-size: small; */
+}
+
+.chatTemprature {
+    margin-top: 15px;
+}
+
+.cylindricalBar {
+    background-color: white;
+    border-radius: 20px;
+    padding: 5px;
+    box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    margin-top: 10%;
+    margin-bottom: 5px;
+    text-align: center;
+    margin-left: 0;
+}
+
+.cylindricalBar h3 {
+    margin-bottom: 0px;
+}
+
+.responseStyle {
+    display: flex;
+    margin-bottom: 10px;
+    justify-content: center;
+    font-size: 11px;
+    color: #000000;
+}
+
+.temperatureButton {
+    border-radius: 999px; /* This will make the buttons cylindrical */
+    padding: 10px 20px;
+    background-color: white; /* Default background color */
+    color: black; /* Text color */
+    border: none;
+    cursor: pointer;
+    font-size: 11px;
+}
+
+.temperatureButton.clicked {
+    background-color: #00b4ed99; /* Dark blue when clicked */
+}
+
+.temperatureButton:hover {
+    background-color: lightblue; /* Dark blue on hover */
+}
+
+.headingContainer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.heading {
+    margin-bottom: 10px;
+}
+
+/* Query Boxes */
+.boxesContainerquerySuggestion {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Adjust to 2 columns for wider boxes */
+    gap: 10px;
+    padding: 5px;
+    margin-left: 150px;
+    margin-right: 150px;
+    margin-top: 3%;
+}
+
+.boxquerySuggestion {
+    background-color: #f6f3f3;
+    padding: 5px 12px; /* Reduce padding for smaller height */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 12px; /* Increase font size slightly if needed */
+    color: #000000;
+    text-align: left;
+    transition: transform 0.2s;
+    align-items: left;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100px; /* Set a fixed height to prevent boxes from being too tall */
+}
+
+
+.boxquerySuggestion:hover {
+    transform: translateY(-3px);
+    cursor: pointer;
+}
+
+.boxquerySuggestion:hover {
+    transform: translateY(-3px);
+}
+
+.hideboxquerySuggestion {
+    background-color: #f6f3f3;
+    padding: 5px 12px; /* Reduce padding for smaller height */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    font-size: 12px; /* Increase font size slightly if needed */
+    color: #000000;
+    text-align: left;
+    transition: transform 0.2s;
+    align-items: left;
+    display: flex;
+    flex-direction: column;
+    height: auto;
+    min-height: 100px; /* Set a fixed height to prevent boxes from being too tall */
+}
+
+
+.hideboxquerySuggestion:hover {
+    transform: translateY(-3px);
+    cursor: pointer;
+}
+
+.hideboxquerySuggestion:hover {
+    transform: translateY(-3px);
+}
+
+.querytitle {
+    font-size: 14px;
+    margin-bottom: 5px;
+    margin-top: 0;
+    color: #031085;
+    font-weight: 500;
+    justify-content: center;
+    display: flex;
+}
+
+
+
+@media (max-width: 1200px) {
+    .boxesContainerquerySuggestion {
+        grid-template-columns: repeat(3, 1fr); /* Two columns for medium screens */
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .boxesContainerquerySuggestion {
+        grid-template-columns: 1fr; /* One column for smaller screens */
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .boxesContainerquerySuggestion {
+        grid-template-columns: repeat(3, 1fr); /* Two columns for medium screens */
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .boxesContainerquerySuggestion {
+        grid-template-columns: 1fr; /* One column for smaller screens */
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+}
+/*Query Boxes  */
+
+.stopButton > FaStop {
+    color: black;
+    font-size: 1rem;
+}
+
+.stopButtonContent {
+    /* margin-left: 460px;*/
+    display: flex;
+    flex-direction: row;
+    /* flex-direction: column; */
+    align-items: center;
+    /* justify-content: center; */
+    /* margin-left: 400px; */
+    /* border: none; */
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: 30px;
+    /* margin-bottom: 1.5%; */
+    background-color: transparent;
+    max-width: 70%;
+}
+/* 
+.stopButtonContent:hover { */
+/* margin-left: 460px;*/
+/* background-color: #97c2e5;
+} */
+
+.stopButtonContent:hover {
+    /* margin-left: 460px;*/
+    background-color: #cee2e8c7;
+    border-radius: 5px;
+}
+.stopButtonContent:active {
+    background-color: #00b4ed99;
+}
+
+.stopButton {
+    background-color: white;
+    border: 2px black solid;
+    border-radius: 50%;
+    height: 1.5rem;
+    width: 1.5rem;
+    /* margin-left: 460px; */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    margin: auto;
+    /* margin-bottom: 0.05rem; */
+    cursor: pointer;
+}
+
+/* @media (max-width: 768px) {
+    .stopButton {
+        margin-left: 460px;
+        margin-right: 308px;
+    }
+} */
+
+.stopText1 {
+    margin-left: 4px;
+}
+
+.stopText {
+    margin: auto;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    /* margin-left: 4px; */
+}
+
+/* @media (max-width: 100vh) {
+    .stopText {
+        margin-left: 56vh;
+        margin-right: 44vh;
+    }
+} */
+
+.stopText {
+    margin: auto;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+/* @media (max-width: 100vh) {
+    .stopText {
+        margin-left: 56vh;
+        margin-right: 44vh;
+    }
+} */
+
+.shrunk {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* margin-top: 80px; */
+    margin-left: 10%;
+    overflow: auto; /* Scroll only if necessary */
+    transition: all ease-in-out 0.5s;
+    min-height: 60%;
+    max-height: 70%;
+}
+
+.guidelines {
+    border: 0 !important;
+    text-decoration: underline;
+    /* color: "#005baa"; */
+    cursor: pointer;
+    margin-left: 5px;
+    /* font-size: 13px; */
+    margin-right: 15px;
+    /* font-weight: bold; */
+    font-style: italic;
+}
+
+@media (max-width: 500px) {
+    .disclaimerText{
+        font-size: 0.6rem;
+        margin: 0.8rem;
+        text-align: center;
+    }
+    .hideboxquerySuggestion{
+        display: none;
+    }
+    .chatInput{
+        padding: 0 16px;
+        max-width: 100%;
+        padding-bottom: 16px;
+    }
+}
+
+@media (max-height: 500px) {
+    .disclaimerText{
+        font-size: 0.7rem;
+        margin: 0.8rem;
+        text-align: center;
+    }
+    .hideboxquerySuggestion{
+        display: none;
+    }
+    
+}
+
+@media (max-width: 500px) {
+    .container{
+      margin-top: 5px;
+      margin-bottom: 50px;
+      max-height: 75%;
+      padding-left: 10px;
+      padding-right: 10px;
+    }
+  }
+  
+  html, body, .chatRoot {
+    overflow-x: hidden; /* Prevent horizontal scrolling */
+  }

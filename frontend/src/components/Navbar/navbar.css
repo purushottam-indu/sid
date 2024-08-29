@@ -1,0 +1,211 @@
+.menu-bars {
+    margin-top: 6px;
+    margin-left: 30px;
+    font-size: 2rem;
+    background: none;
+    position: fixed;
+    z-index: 999;
+}
+
+.IoMdMenu {
+    color: black;
+}
+
+.no-border {
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.nav-menu {
+    background-color: #005baa;
+    width: 200px;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    top: 0;
+    left: -100%;
+    transition:
+        left 350ms ease,
+        width 350ms ease;
+    margin-top: 45px;
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+    .nav-menu {
+        width: 100vw;
+    }
+}
+
+.nav-menu.active {
+    left: 0;
+}
+
+.nav-text {
+    color: #fafbfc;
+    display: flex;
+    align-items: center;
+    padding: 8px 4px 4px;
+    height: 40px;
+    font-size: 16px; /* Decreased font size */
+    text-decoration: none;
+    cursor: pointer;
+    /*margin-top: 1rem;*/
+}
+
+.nav-text > a,
+.nav-text > div {
+    display: flex;
+    align-items: center;
+}
+
+.nav-menu-items > li:hover {
+    background-color: #00b4ed99;
+    border-radius: 4px;
+    transition: background-color 200ms ease; /* Smooth transition effect */
+}
+
+.nav-menu-items {
+    width: 100%;
+    position: relative;
+    padding: 20px;
+}
+
+.navbar-toggle {
+    background-color: #005baa;
+    width: 100%;
+    height: 80px;
+    display: flex;
+    justify-content: start;
+    align-items: center;
+}
+
+.navtextSpan {
+    margin-left: 18px;
+    font-size: 12px;
+    /* Decreased font size */
+}
+
+.chat-history {
+    width: 90%;
+    background-color: #005baa;
+    display: flex;
+    align-items: center;
+    color: #fafbfc;
+    justify-content: start;
+    padding: 8px 0;
+    list-style: none;
+    height: 50px;
+    margin-left: 20px;
+}
+
+.history {
+    width: 90%;
+    height: 240px;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background-color: #fff;
+    color: #333;
+    border-radius: 4px;
+    overflow-y: auto;
+    box-sizing: border-box;
+    margin: 10px 0;
+}
+
+.history:focus {
+    outline: none;
+    border-color: #005baa;
+    box-shadow: 0 0 5px rgba(0, 91, 170, 0.5);
+}
+
+.navbar-icons {
+    background-color: #ddedff;
+    margin-left: 1rem;
+    font-size: 1rem; /* Decreased icon size */
+    width: 1.5rem; /* Adjusted width */
+    height: 1.5rem; /* Adjusted height */
+    border-radius: 1.5rem; /* Adjusted border-radius */
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 200ms ease; /* Smooth transition for transform */
+}
+
+.navbar-icons:hover {
+    transform: scale(1.1); /* Slightly increase size on hover */
+}
+
+.nav-text:hover span {
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5); /* Add shadow effect on hover */
+}
+
+.chatPromptTemplate {
+    margin-top: 15px;
+    /* top: 15px; */
+    /* border-radius: 50%; */
+    /* background-color: gray; */
+}
+
+.headingContainer {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 40px;
+}
+
+.heading {
+    margin-bottom: 10px;
+}
+
+.parameterstext1 {
+    padding: 1%;
+    margin-top: 2%;
+    font-size: 11px;
+}
+
+.parameterstext2 {
+    padding: 1%;
+    margin-top: 5%;
+    font-size: 11px;
+}
+
+.saveButton {
+    align-items: center;
+    justify-content: center;
+    left: 13rem;
+    height: 2rem;
+    width: 2rem;
+    display: flex;
+    background-color: #00b4ed99;
+}
+
+.saveConfigPanel {
+    color: white;
+    font-size: 15px;
+}
+
+.customizeChatDSI {
+    width: 30%;
+}
+/* .nav-text {
+    padding: 0;
+} */
+.nav-text-clickable {
+    min-width: 100%;
+    height: 100%;
+}
+
+/* dialogStyles = {
+main: {
+    width: '800px', // Adjust this value to your desired width
+    maxWidth: 'none' // Allows the dialog to expand beyond the default max width
+}
+}; */
+
+/* .userIcon {
+  color: white;
+  background-color: #005baa;
+} */

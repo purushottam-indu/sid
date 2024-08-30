@@ -6,7 +6,8 @@ export default defineConfig({
     plugins: [react()],
     base: "/sid/",
     build: {
-        outDir: "../backend/static",
+        // outDir: "..//backend/static",
+        outDir: "..//frontend/static",
         emptyOutDir: true,
         sourcemap: true,
         rollupOptions: {
